@@ -12,6 +12,9 @@ Cosine currently consists of a simple CLI `cosine.py` and a FastAPI server.
 ```bash
 python upload ~/path/to/obsidian/vault
 python cosine.py search "Why is digital privacy important?"
+```
+
+```
 +-----------------------------+------------------------------------------------------------------------+
 | File                        | Text                                                                   |
 +=============================+========================================================================+
