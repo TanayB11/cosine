@@ -1,5 +1,5 @@
 import os, argparse
-import requests
+import requests, urllib
 import shutil, json
 from tabulate import tabulate
 import textwrap
@@ -53,6 +53,7 @@ def main():
             messages = [
                 {
                     "File": results['metadatas'][0][idx]['source'].split('/')[-1],
+                    # "File": f"obsidian://advanced-uri?vault=Obsidian&filepath={urllib.parse.quote(results['metadatas'][0][idx]['source'].split('uploads/decompressed/')[-1], safe='')}",
                     "Text": textwrap.fill(message, width=int(term_width * 2//3))
                 }
               for (idx, message) in enumerate(results['documents'][0])
