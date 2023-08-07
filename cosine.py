@@ -5,9 +5,8 @@ from tabulate import tabulate
 import textwrap
 
 API_URL = 'http://localhost:8000/api'
-VAULT_LOCATION = '/Users/tanay/Documents/Obsidian/Personal/Notes/'
 
-def upload(vault_location=VAULT_LOCATION) -> None:
+def upload(vault_location) -> None:
     # Zip directory to a file
     zip_filename = 'cosine_temp'
     shutil.make_archive(zip_filename, 'zip', vault_location)
@@ -39,11 +38,13 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("command", choices=["upload", "search"])
     parser.add_argument("query", nargs="?")
-    parser.add_argument("vault_dir", nargs="?")
     args = parser.parse_args()
 
     if args.command == "upload":
-        upload(args.vault_dir)
+        if (args.query != None):
+            upload(args.query)
+        else:
+            print("No vault directory provided")
     elif args.command == "search":
         if args.query:
             results = search(args.query)

@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+
+  app:
+    image: cosine_server
+    build:
+      context: .
+    container_name: cosine_server
+    ports:
+      - "9000:9000"
+    volumes:
+      - .:/app
+    command: make prod
+
