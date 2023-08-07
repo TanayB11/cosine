@@ -3,8 +3,23 @@ Private semantic search for your Obsidian vault
 
 ---
 
+- [About](#about)
 - [Examples](#examples)
 - [Setup](#setup)
+
+
+## About
+Semantic search allows you to search for content based on its meaning, rather
+than just matching keywords. You'll find relevant information, even if it uses
+different terminology.
+
+Most solutions for semantic search in Obsidian rely on OpenAI's API, but I
+don't want to upload my private Obsidian vault to an external server.
+
+Cosine runs locally on your own machine (or server). It uses [Langchain](https://www.langchain.com/),
+[ChromaDB](https://www.trychroma.com/), [FastAPI](https://fastapi.tiangolo.com/),
+and [Sentence Transformers](https://www.sbert.net/).
+
 
 ## Examples
 Cosine currently consists of a simple CLI `cosine.py` and a FastAPI server.
@@ -39,6 +54,7 @@ python cosine.py search "Why is digital privacy important?"
 |                             | these positions came with almost universal access to the employer’s    |
 +-----------------------------+------------------------------------------------------------------------+
 ```
+
 
 ## Setup
 First clone this repository, then
