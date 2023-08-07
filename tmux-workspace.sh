@@ -8,7 +8,7 @@ tmux send-keys 'vim' C-m
 # client dev window
 tmux split-window -v -t cosine
 tmux resize-pane -D 10
-tmux send-keys 'make dev' C-m 'n' C-m
+tmux send-keys 'cd server && make dev' C-m 'n' C-m
 
 # git/misc window
 tmux new-window -t cosine
