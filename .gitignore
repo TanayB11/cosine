@@ -1,5 +1,6 @@
 uploads
 chroma
+*.lance
 
 **/.DS_Store
 **/__pycache__
