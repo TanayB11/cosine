@@ -9,4 +9,5 @@ chroma
 *.swp
 
 venv
+env
 .env
