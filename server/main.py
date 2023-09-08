@@ -7,9 +7,9 @@ import shutil, zipfile, uuid
 from langchain.document_loaders import TextLoader, DirectoryLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings.base import Embeddings
-from langchain.vectorstores import Chroma
+from langchain.vectorstores import LanceDB
 from sentence_transformers import SentenceTransformer
-import chromadb
+import lancedb
 from typing import List
 
 
@@ -28,9 +28,10 @@ class MiniLMEmbeddings(Embeddings):
 class DBQuery(BaseModel):
     query: str
 
-COLLECTION_NAME = "obsidian" # TODO: use env vars
+TABLE_NAME = "obsidian" # TODO: use env vars
 NUM_RESULTS=10 # 10 nearest neighbors
-db_client = chromadb.HttpClient(host='localhost', port=8080)
+db_client = lancedb.connect('./lancedb')
+embeddings = MiniLMEmbeddings()
 
 # DEFINE APPLICATION ROUTES
 
@@ -41,8 +42,7 @@ def read_root():
 @app.post("/api/reindex/")
 async def upload_directory(directory: UploadFile = File(...)):
     # clear db and uploads folder
-    db_client.reset()
-    collection = db_client.get_or_create_collection(COLLECTION_NAME)
+    db_client.drop_database()
 
     uploads_dir = Path('./uploads')
     if uploads_dir.exists() and uploads_dir.is_dir():
@@ -66,23 +66,28 @@ async def upload_directory(directory: UploadFile = File(...)):
     text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     documents = text_splitter.split_documents(raw_documents)
 
-    collection.add(
-        ids=[str(uuid.uuid1()) for _ in documents],
-        metadatas=[ doc.metadata for doc in documents ],
-        documents=[ doc.page_content for doc in documents ],
-        embeddings=MiniLMEmbeddings().embed_documents([ doc.page_content for doc in documents ])
-    )
+    table = db_client.create_table(
+            TABLE_NAME,
+            data=[
+                {
+                    "id": str(uuid.uuid1()),
+                    "metadata": doc.metadata['source'],
+                    "text": doc.page_content,
+                    "vector": embeddings.embed_query(doc.page_content),
+                } for doc in documents
+            ],
+        )
 
     return { "message": "reindexed successfully" }
 
 @app.post("/api/query/")
 async def query(q: DBQuery):
-    collection = db_client.get_or_create_collection(COLLECTION_NAME)
+    collection = db_client.open_table(TABLE_NAME)
+    docs = collection.search(embeddings.embed_query(q.query)).to_df()
+    docs = docs[['metadata', 'text']].to_dict()
 
-    docs = collection.query(
-            query_embeddings=MiniLMEmbeddings().embed_query(q.query),
-            n_results=NUM_RESULTS
-        )
+    docs['metadata'] = list(docs['metadata'].values())
+    docs['text'] = list(docs['text'].values())
 
-    return { "message": docs }
+    return { "message" : docs }
 

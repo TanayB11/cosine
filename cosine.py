@@ -52,17 +52,15 @@ def main():
             term_width = os.get_terminal_size().columns
             messages = [
                 {
-                    "File": results['metadatas'][0][idx]['source'].split('/')[-1],
+                    "File": results['metadata'][idx].split('/')[-1],
                     # "File": f"obsidian://advanced-uri?vault=Obsidian&filepath={urllib.parse.quote(results['metadatas'][0][idx]['source'].split('uploads/decompressed/')[-1], safe='')}",
                     "Text": textwrap.fill(message, width=int(term_width * 2//3))
                 }
-              for (idx, message) in enumerate(results['documents'][0])
+              for (idx, message) in enumerate(results['text'])
             ]
             headers = {"ID": "ID", "Message": "Message"}
             table = tabulate(messages, headers=headers, tablefmt="grid")
             print(table, "\n")
-
-            # print(results[''][0])
         else:
             print("No search query provided")
 
