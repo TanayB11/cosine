@@ -11,7 +11,7 @@ import os
 class StopwatchApp(App):
     """A Textual app to manage stopwatches."""
 
-    BINDINGS = [("d", "toggle_dark", "Toggle dark mode"), ("r", "reindex_vault", "Reindex the vault")]
+    BINDINGS = [("d", "toggle_dark", "Toggle dark mode"), ("r", "reindex_vault", "Reindex the vault (slow)")]
     CSS_PATH = "cosine_ui.tcss"
 
     def compose(self) -> ComposeResult:
