@@ -17,16 +17,19 @@ Most solutions for semantic search in Obsidian rely on OpenAI's API, but I
 don't want to upload my private Obsidian vault to an external server.
 
 Cosine runs locally on your own machine (or server). It uses [Langchain](https://www.langchain.com/),
-[ChromaDB](https://www.trychroma.com/), [FastAPI](https://fastapi.tiangolo.com/),
+[LanceDB](https://lancedb.com/), [FastAPI](https://fastapi.tiangolo.com/),
 and [Sentence Transformers](https://www.sbert.net/).
-
-This is currently a work in progress - planning to create an Obsidian plugin,
-add data deduplication for faster uploads, and self-hosting with Docker. 
 
 ## Examples
 Cosine currently consists of a simple CLI `cosine.py` and a FastAPI server.
 
 ```bash
+make env # sets up the python virtual environment 
+
+# run the TUI and server together
+make # runs the terminal UI and server together. Ctrl-C to stop.
+
+# alternatively, use the CLI
 python upload ~/path/to/obsidian/vault
 python cosine.py search "Why is digital privacy important?"
 ```
@@ -55,51 +58,5 @@ python cosine.py search "Why is digital privacy important?"
 |                             | systems administration jobs that were out there were private, because  |
 |                             | these positions came with almost universal access to the employer’s    |
 +-----------------------------+------------------------------------------------------------------------+
-```
-
-
-## Setup
-First clone this repository, then
-
-```bash
-cd cosine
-git clone https://github.com/chroma-core/chroma.git
-cd chroma
-```
-
-Then modify `chroma/docker-compose.yml` to reflect the following:
-```yaml
-environment:
-  - IS_PERSISTENT=TRUE
-  - ALLOW_RESET=TRUE
-ports:
-  - 8080:8000
-```
-
-Then run the database:
-```bash
-docker compose up -d
-docker-compose up -d # or this, depending on your docker/docker-compose version
-```
-
-Then set up the server:
-```bash
-cd .. # return to the root of this repository
-python3 -m venv env && source env/bin/activate
-pip install -r requirements.txt
-make prod # runs the server
-make dev # run this instead for development
-```
-
-Test Cosine with your vault:
-```bash
-python upload ~/path/to/obsidian/vault
-python cosine.py search "Your query here"
-```
-
-To shut everything down,
-```
-cd chroma && docker compose down
-cd .. && deactivate 
 ```
 

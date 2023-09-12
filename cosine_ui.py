@@ -3,6 +3,7 @@ from textual.containers import ScrollableContainer
 from textual.widgets import Footer, Button, Input, Rule, Markdown
 from textual.widget import Widget
 from textual.reactive import reactive
+from server.main import app as server
 from cosine import upload, search, tabulate_search_results
 from dotenv import load_dotenv
 import os
@@ -40,5 +41,5 @@ class StopwatchApp(App):
 
 if __name__ == "__main__":
     load_dotenv()
-    app = StopwatchApp()
-    app.run()
+    client = StopwatchApp()
+    client.run()
