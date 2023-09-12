@@ -1,5 +1,6 @@
 from typing import Union
 from fastapi import FastAPI, File, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from pathlib import Path
 import shutil, zipfile, uuid
@@ -15,9 +16,19 @@ from typing import List
 
 app = FastAPI()
 
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 class MiniLMEmbeddings(Embeddings):
     def __init__(self):
-        self.encoder = SentenceTransformer('all-MiniLM-L6-v2')
+        self.encoder = SentenceTransformer('msmarco-distilroberta-base-v2')
 
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
         return self.encoder.encode(texts).tolist()

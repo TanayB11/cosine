@@ -1,7 +1,7 @@
 import os, argparse
 import requests, urllib
 import shutil, json
-from tabulate import tabulate
+from tabulate import tabulate, SEPARATING_LINE
 import textwrap
 
 API_URL = 'http://localhost:8000/api'
@@ -34,6 +34,26 @@ def search(query: str):
     # print(json.loads(response.text)['message']['documents'][0][0])
     return json.loads(response.text)['message']
 
+def tabulate_search_results(results):
+    term_width = os.get_terminal_size().columns
+
+    messages = []
+
+    for (idx, message) in enumerate(results['text']):
+        messages.append(
+            [
+                "**" + results['metadata'][idx].split('/')[-1] + "**",
+                # "File": f"obsidian://advanced-uri?vault=Obsidian&filepath={urllib.parse.quote(results['metadata'][idx].split('/')[-1])}",
+                textwrap.fill(message, width=int(term_width * 2//3))
+            ]
+        )
+        messages.append(SEPARATING_LINE)
+
+    headers = {"File": "File", "Message": "Message"}
+    table = tabulate(messages, headers=headers, tablefmt="pipe").replace(":-", "--")
+
+    return table
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("command", choices=["upload", "search"])
@@ -48,19 +68,7 @@ def main():
     elif args.command == "search":
         if args.query:
             results = search(args.query)
-
-            term_width = os.get_terminal_size().columns
-            messages = [
-                {
-                    "File": results['metadata'][idx].split('/')[-1],
-                    # "File": f"obsidian://advanced-uri?vault=Obsidian&filepath={urllib.parse.quote(results['metadatas'][0][idx]['source'].split('uploads/decompressed/')[-1], safe='')}",
-                    "Text": textwrap.fill(message, width=int(term_width * 2//3))
-                }
-              for (idx, message) in enumerate(results['text'])
-            ]
-            headers = {"ID": "ID", "Message": "Message"}
-            table = tabulate(messages, headers=headers, tablefmt="grid")
-            print(table, "\n")
+            print(tabulate_search_results(results), "\n")
         else:
             print("No search query provided")
 

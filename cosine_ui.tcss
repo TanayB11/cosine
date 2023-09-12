@@ -1,0 +1,10 @@
+Input {
+  content-align: left middle;
+}
+
+Button {
+  width: 16;
+  margin-left: 1;
+  margin-right: 1;
+  margin-top: 2;
+}
