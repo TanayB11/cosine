@@ -20,16 +20,35 @@ Cosine runs locally on your own machine (or server). It uses [Langchain](https:/
 [LanceDB](https://lancedb.com/), [FastAPI](https://fastapi.tiangolo.com/),
 and [Sentence Transformers](https://www.sbert.net/).
 
-## Examples
+## Setup
 Cosine currently consists of a simple CLI `cosine.py` and a FastAPI server.
 
+First, populate `.env`:
+```
+VAULT_PATH=/path/to/your/vault
+```
+
+Then, install dependencies:
 ```bash
-make env # sets up the python virtual environment 
+python3 -m venv env
+source env/bin/activate
+pip install -r requirements.txt
+```
 
-# run the TUI and server together
-make # runs the terminal UI and server together. Ctrl-C to stop.
+With the virtual environment activated, there are two options to run Cosine:
+```
+# the easy way: run the TUI and server together, use Ctrl-C to stop
+make
+```
 
-# alternatively, use the CLI
+Alternatively, use the CLI. Note that table formatting is optimized for
+markdown output, so outputs might look weird.
+```
+# first, start the server
+cd server
+make prod
+
+# run these in a separate terminal window
 python upload ~/path/to/obsidian/vault
 python cosine.py search "Why is digital privacy important?"
 ```
